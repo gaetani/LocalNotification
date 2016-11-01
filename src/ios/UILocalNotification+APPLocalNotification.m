@@ -84,13 +84,17 @@ NSString *ActionableCategory = @"ACTIONABLE";
     NSMutableArray *notificationActions = [[NSMutableArray alloc] init];
 
     for(int i = 0; i < [actions count]; i++) {
-        NSString *action = [actions objectAtIndex:i];
+        NSObject *action = [actions objectAtIndex:i];
+        NSString *title = [action valueForKey:@"label"];
+        BOOL destructive = [[action valueForKey:@"destructive"] boolValue];
+        BOOL authenticate = [[action valueForKey:@"authentication_required"] boolValue];
+
         UIMutableUserNotificationAction *notificationAction = [[UIMutableUserNotificationAction alloc] init];
-        notificationAction.identifier = action;
-        notificationAction.title = action;
+        notificationAction.identifier = title;
+        notificationAction.title = title;
         notificationAction.activationMode = UIUserNotificationActivationModeBackground;
-        notificationAction.destructive = NO;
-        notificationAction.authenticationRequired = NO;
+        notificationAction.destructive =destructive;
+        notificationAction.authenticationRequired = authenticate;
         [notificationActions addObject:notificationAction];
       }
 
