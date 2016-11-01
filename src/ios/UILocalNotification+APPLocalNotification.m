@@ -29,6 +29,7 @@ static char optionsKey;
 
 NSInteger const APPLocalNotificationTypeScheduled = 1;
 NSInteger const APPLocalNotificationTypeTriggered = 2;
+NSString *ActionableCategory = @"ACTIONABLE";
 
 @implementation UILocalNotification (APPLocalNotification)
 
@@ -71,6 +72,46 @@ NSInteger const APPLocalNotificationTypeTriggered = 2;
     if ([self wasInThePast]) {
         self.fireDate = [NSDate date];
     }
+    
+    if ([self hasActions]) {
+        [self setupActions];
+    }
+}
+
+- (void) setupActions
+{
+    NSArray* actions = self.options.actions;
+    NSMutableArray *notificationActions = [[NSMutableArray alloc] init];
+
+    for(int i = 0; i < [actions count]; i++) {
+        NSObject *action = [actions objectAtIndex:i];
+        NSString *title = [action valueForKey:@"label"];
+        BOOL destructive = [[action valueForKey:@"destructive"] boolValue];
+        BOOL authenticate = [[action valueForKey:@"authentication_required"] boolValue];
+
+        UIMutableUserNotificationAction *notificationAction = [[UIMutableUserNotificationAction alloc] init];
+        notificationAction.identifier = title;
+        notificationAction.title = title;
+        notificationAction.activationMode = UIUserNotificationActivationModeBackground;
+        notificationAction.destructive =destructive;
+        notificationAction.authenticationRequired = authenticate;
+        [notificationActions addObject:notificationAction];
+      }
+
+      UIMutableUserNotificationCategory *notificationCategory = [[UIMutableUserNotificationCategory alloc] init];
+      notificationCategory.identifier = ActionableCategory;
+      [notificationCategory setActions:notificationActions forContext:UIUserNotificationActionContextDefault];
+      [notificationCategory setActions:notificationActions forContext:UIUserNotificationActionContextMinimal];
+
+      NSSet *categories = [NSSet setWithObjects:notificationCategory, nil];
+
+      UIUserNotificationType notificationType = UIUserNotificationTypeBadge | UIUserNotificationTypeSound | UIUserNotificationTypeAlert;
+
+      UIUserNotificationSettings *notificationSettings = [UIUserNotificationSettings settingsForTypes:notificationType categories:categories];
+
+      [[UIApplication sharedApplication] registerUserNotificationSettings:notificationSettings];
+
+    self.category = ActionableCategory;
 }
 
 #pragma mark -
@@ -237,6 +278,15 @@ NSInteger const APPLocalNotificationTypeTriggered = 2;
 - (BOOL) isRepeating
 {
     return [self.options isRepeating];
+}
+
+/**
+* If custom actions were passed in the options.
+*/
+
+- (BOOL) hasActions
+{
+    return [[self.options actions] count] > 0;
 }
 
 /**
