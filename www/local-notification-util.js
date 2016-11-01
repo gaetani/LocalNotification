@@ -37,6 +37,7 @@ exports._defaults = {
     badge: 0,
     id:    0,
     actions: [],
+    category: undefined,
     data:  undefined,
     every: undefined,
     at:    undefined
