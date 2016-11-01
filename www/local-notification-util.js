@@ -36,6 +36,7 @@ exports._defaults = {
     sound: 'res://platform_default',
     badge: 0,
     id:    0,
+    actions: [],
     data:  undefined,
     every: undefined,
     at:    undefined

@@ -202,6 +202,11 @@ NSString* const DEFAULT_SOUND = @"res://platform_default";
     return dict;
 }
 
+- (NSArray*) actions
+{
+  return [dict objectForKey:@"actions"];
+}
+
 /**
  * If it's a repeating notification.
  */
