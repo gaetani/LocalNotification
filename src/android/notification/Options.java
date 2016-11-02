@@ -330,6 +330,8 @@ public class Options {
         }
     }
 
+    public boolean isOpenApp() { return options.optBoolean("openApp", true); }
+
     /**
      * @return
      *      The notification background color for the small icon

@@ -40,7 +40,8 @@ exports._defaults = {
     category: undefined,
     data:  undefined,
     every: undefined,
-    at:    undefined
+    at:    undefined,
+    openApp: true
 };
 
 // listener
