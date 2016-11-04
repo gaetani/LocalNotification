@@ -29,7 +29,6 @@ static char optionsKey;
 
 NSInteger const APPLocalNotificationTypeScheduled = 1;
 NSInteger const APPLocalNotificationTypeTriggered = 2;
-NSString *ActionableCategory = @"ACTIONABLE";
 
 @implementation UILocalNotification (APPLocalNotification)
 
@@ -82,24 +81,27 @@ NSString *ActionableCategory = @"ACTIONABLE";
 {
     NSArray* actions = self.options.actions;
     NSMutableArray *notificationActions = [[NSMutableArray alloc] init];
+    NSString *category = [self.options valueForKey:@"category"];
 
     for(int i = 0; i < [actions count]; i++) {
         NSObject *action = [actions objectAtIndex:i];
-        NSString *title = [action valueForKey:@"label"];
+        NSString *title = [action valueForKey:@"title"];
+        NSString *identifier = [action valueForKey:@"identifier"];
         BOOL destructive = [[action valueForKey:@"destructive"] boolValue];
-        BOOL authenticate = [[action valueForKey:@"authentication_required"] boolValue];
+        BOOL authenticate = [[action valueForKey:@"authenticationRequired"] boolValue];
 
         UIMutableUserNotificationAction *notificationAction = [[UIMutableUserNotificationAction alloc] init];
-        notificationAction.identifier = title;
+        notificationAction.identifier = identifier;
         notificationAction.title = title;
-        notificationAction.activationMode = UIUserNotificationActivationModeBackground;
-        notificationAction.destructive =destructive;
+        notificationAction.activationMode = [[action valueForKey:@"activationMode"]  isEqual: @"background"]
+                                        ? UIUserNotificationActivationModeBackground : UIUserNotificationActivationModeForeground;
+        notificationAction.destructive = destructive;
         notificationAction.authenticationRequired = authenticate;
         [notificationActions addObject:notificationAction];
       }
 
       UIMutableUserNotificationCategory *notificationCategory = [[UIMutableUserNotificationCategory alloc] init];
-      notificationCategory.identifier = ActionableCategory;
+      notificationCategory.identifier = category;
       [notificationCategory setActions:notificationActions forContext:UIUserNotificationActionContextDefault];
       [notificationCategory setActions:notificationActions forContext:UIUserNotificationActionContextMinimal];
 
@@ -111,7 +113,7 @@ NSString *ActionableCategory = @"ACTIONABLE";
 
       [[UIApplication sharedApplication] registerUserNotificationSettings:notificationSettings];
 
-    self.category = ActionableCategory;
+    self.category = category;
 }
 
 #pragma mark -
