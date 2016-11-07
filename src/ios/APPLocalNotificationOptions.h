@@ -30,11 +30,13 @@
 
 @property (readonly, getter=id) NSNumber* id;
 @property (readonly, getter=badgeNumber) NSInteger badgeNumber;
+@property (readonly, getter=category) NSString* category;
 @property (readonly, getter=alertBody) NSString* alertBody;
 @property (readonly, getter=soundName) NSString* soundName;
 @property (readonly, getter=fireDate) NSDate* fireDate;
 @property (readonly, getter=repeatInterval) NSCalendarUnit repeatInterval;
 @property (readonly, getter=userInfo) NSDictionary* userInfo;
+@property (readonly, getter=actions) NSArray* actions;
 
 // If it's a repeating notification
 - (BOOL) isRepeating;

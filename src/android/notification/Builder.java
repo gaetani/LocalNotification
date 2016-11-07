@@ -186,7 +186,7 @@ public class Builder {
             return;
 
         Intent intent = new Intent(context, clickActivity)
-                .putExtra(Options.EXTRA, options.toString())
+                .putExtra(Options.EXTRA, new String[] {options.toString(), null})
                 .setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 
         int reqCode = new Random().nextInt();
@@ -194,7 +194,25 @@ public class Builder {
         PendingIntent contentIntent = PendingIntent.getActivity(
                 context, reqCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+        Action[] actionsArray = options.getActions();
+        if (actionsArray != null && actionsArray.length > 0) {
+            for(Action action : actionsArray) {
+                builder.addAction(action.getIcon(), action.getTitle(), getPendingIntentForAction(action));
+            }
+        }
         builder.setContentIntent(contentIntent);
     }
 
+    private PendingIntent getPendingIntentForAction(Action action) {
+        Intent intent = new Intent(context, clickActivity)
+                .putExtra(Options.EXTRA, new String[]{ options.toString(), action.getIdentifier() })
+                .setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+
+        int requestCode = new Random().nextInt();
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                context, requestCode, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+        return pendingIntent;
+    }
 }

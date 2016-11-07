@@ -545,12 +545,21 @@ public class LocalNotification extends CordovaPlugin {
      * @param notification
      *      Optional local notification to pass the id and properties.
      */
+
     static void fireEvent (String event, Notification notification) {
+        fireEvent(event, notification, null);
+    }
+
+    static void fireEvent (String event, Notification notification, String data) {
         String state = getApplicationState();
         String params = "\"" + state + "\"";
 
         if (notification != null) {
             params = notification.toString() + "," + params;
+        }
+
+        if(data != null) {
+            params += ",{\"identifier\":\"" + data + "\"}";
         }
 
         String js = "cordova.plugins.notification.local.core.fireEvent(" +
