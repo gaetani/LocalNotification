@@ -198,7 +198,7 @@ public class Builder {
         Action[] actionsArray = options.getActions();
         if (actionsArray != null && actionsArray.length > 0) {
             for(Action action : actionsArray) {
-                builder.addAction(0, action.getTitle(), getPendingIntentForAction(action));
+                builder.addAction(action.getIcon(), action.getTitle(), getPendingIntentForAction(action));
             }
         }
         builder.setContentIntent(contentIntent);
