@@ -1,6 +1,53 @@
 
-[![npm version](https://badge.fury.io/js/de.appplant.cordova.plugin.local-notification.svg)](http://badge.fury.io/js/de.appplant.cordova.plugin.local-notification)
-[![PayPayl donate button](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=L3HKQCD9UA35A "Donate once-off to this project using Paypal")
+Cordova Local-Notification Plugin with Actions
+=================================
+
+This is a fork of  [fac/LocalNotification](https://github.com/fac/LocalNotification) which in the end is a fork of [katzer/cordova-plugin-local-notifications](https://github.com/katzer/cordova-plugin-local-notifications).
+
+I did some small changes as I needed actions on notifications for Android and iOS. I mostly pulled together some pull requests into this branch and modified some tiny bits in order to have everything as I needed.
+
+So far, actions are working on Android but does not work on iOS. I updated the sample bellow with the template of actions, as well as with the `openApp` attribute. 
+
+
+## Sample
+The sample demonstrates how to schedule a local notification which repeats every week. The listener will be called when the user has clicked on the local notification.
+
+```javascript
+cordova.plugins.notification.local.schedule({
+    id: 1,
+    title: "Production Jour fixe",
+    text: "Duration 1h",
+    firstAt: monday_9_am,
+    every: "week",
+    sound: "file://sounds/reminder.mp3",
+    icon: "http://icons.com/?cal_id=1",
+    data: { meetingId:"123#fg8" },
+    actions:  [
+    {
+        title: string,
+        identifier: number
+    },
+    category: string,
+    openApp: boolean
+});
+
+cordova.plugins.notification.local.on("click", function (notification) {
+    joinMeeting(notification.data.meetingId);
+});
+```
+
+`actions` is an array of buttons. You can add any other object into this array and it will be passed into the callback.
+
+`category` is also needed and you can use to categorize your notificaiton.
+
+`openApp` is available thanks to the PR from [richturner](https://github.com/katzer/cordova-plugin-local-notifications/pull/1025). If this is set to `true`, the app will only open when tapping the notification and not the buttons. If set to `false`, the app will not open when clicking the notifications. 
+
+
+## To Do`s
+* Fix notification for iOS
+* Fix issue with Android when clicking on multiple actions without opening the app. The callback for the actions are lost after a while. 
+
+
 
 Cordova Local-Notification Plugin
 =================================
@@ -63,30 +110,7 @@ Find out more informations [here][wiki_kitchensink] in our wiki.
 ## What's new
 We are proud to announce our newest release version 0.8.x. Beside the hard work at the office and at the weekends it contains a lot of goodies, new features and easy to use APIs.
 
-Find out more informations [here][wiki_changelog] in our wiki.
-
-
-## Sample
-The sample demonstrates how to schedule a local notification which repeats every week. The listener will be called when the user has clicked on the local notification.
-
-```javascript
-cordova.plugins.notification.local.schedule({
-    id: 1,
-    title: "Production Jour fixe",
-    text: "Duration 1h",
-    firstAt: monday_9_am,
-    every: "week",
-    sound: "file://sounds/reminder.mp3",
-    icon: "http://icons.com/?cal_id=1",
-    data: { meetingId:"123#fg8" }
-});
-
-cordova.plugins.notification.local.on("click", function (notification) {
-    joinMeeting(notification.data.meetingId);
-});
-```
-
-Find out more informations [here][wiki_samples] in our wiki.
+Find out more informations [here][wiki_changelog] in our wiki
 
 
 ## I would like to propose new features
