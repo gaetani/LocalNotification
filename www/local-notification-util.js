@@ -302,6 +302,13 @@ exports.exec = function (action, args, callback, scope) {
  * HOOKS *
  *********/
 
+// Called after 'deviceready' event
+channel.deviceready.subscribe(function () {
+    // Device is ready now, the listeners are registered
+    // and all queued events can be executed.
+    exec(null, null, 'LocalNotification', 'deviceready', []);
+});
+
 // Called before 'deviceready' event
 channel.onCordovaReady.subscribe(function () {
     // Device plugin is ready now
