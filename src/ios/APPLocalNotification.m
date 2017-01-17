@@ -797,7 +797,6 @@
         params = [NSString stringWithFormat:@"%@,'%@'", args, appState];
         
         if ([data length]  > 0) {
-            NSLog(@"%@", data);
             params = [NSString stringWithFormat:
                       @"%@,'%@','%@'",
                       args, appState, data];
