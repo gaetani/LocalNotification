@@ -100,7 +100,7 @@ static char optionsKey;
 
       [[UIApplication sharedApplication] registerUserNotificationSettings:notificationSettings];
 
-    self.category = category;
+   /* self.category = category;*/
 }
 
 #pragma mark -
