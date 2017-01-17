@@ -21,8 +21,8 @@
  * @APPPLANT_LICENSE_HEADER_END@
  */
 
-#import "UILocalNotification+APPLocalNotification.h"
-#import "APPLocalNotificationOptions.h"
+#import "UILocalNotification+APPLocalNotification.ios9.h"
+#import "APPLocalNotificationOptions.ios9.h"
 #import <objc/runtime.h>
 
 static char optionsKey;
@@ -56,7 +56,7 @@ NSInteger const APPLocalNotificationTypeTriggered = 2;
  */
 - (void) __init
 {
-    APPLocalNotificationOptions* options = self.options;
+    APPLocalNotificationOptions9* options = self.options;
 
     self.fireDate = options.fireDate;
     self.timeZone = [NSTimeZone defaultTimeZone];
@@ -122,12 +122,12 @@ NSInteger const APPLocalNotificationTypeTriggered = 2;
 /**
  * The options provided by the plug-in.
  */
-- (APPLocalNotificationOptions*) options
+- (APPLocalNotificationOptions9*) options
 {
-    APPLocalNotificationOptions* options = [self getOptions];
+    APPLocalNotificationOptions9* options = [self getOptions];
 
     if (!options) {
-        options = [[APPLocalNotificationOptions alloc]
+        options = [[APPLocalNotificationOptions9 alloc]
                    initWithDict:[self userInfo]];
 
         [self setOptions:options];
@@ -139,7 +139,7 @@ NSInteger const APPLocalNotificationTypeTriggered = 2;
 /**
  * Get associated option object
  */
-- (APPLocalNotificationOptions*) getOptions
+- (APPLocalNotificationOptions9*) getOptions
 {
     return objc_getAssociatedObject(self, &optionsKey);
 }
@@ -147,7 +147,7 @@ NSInteger const APPLocalNotificationTypeTriggered = 2;
 /**
  * Set associated option object
  */
-- (void) setOptions:(APPLocalNotificationOptions*)options
+- (void) setOptions:(APPLocalNotificationOptions9*)options
 {
     objc_setAssociatedObject(self, &optionsKey,
                              options, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
@@ -294,7 +294,7 @@ NSInteger const APPLocalNotificationTypeTriggered = 2;
 /**
  * Process state type of the local notification.
  */
-- (APPLocalNotificationType) type
+- (APPNotificationType) type
 {
     return [self isTriggered] ? NotifcationTypeTriggered : NotifcationTypeScheduled;
 }
