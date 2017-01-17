@@ -62,6 +62,7 @@ static char optionsKey;
     self.body     = options.text;
     self.sound    = options.sound;
     self.badge    = options.badge;
+    self.category = options.category;
 }
 
 - (void) setupActions
@@ -100,7 +101,7 @@ static char optionsKey;
 
       [[UIApplication sharedApplication] registerUserNotificationSettings:notificationSettings];
 
-   /* self.category = category;*/
+    self.category = category;
 }
 
 #pragma mark -
