@@ -35,6 +35,8 @@
 @property (readonly, getter=fireDate) NSDate* fireDate;
 @property (readonly, getter=repeatInterval) NSCalendarUnit repeatInterval;
 @property (readonly, getter=userInfo) NSDictionary* userInfo;
+@property (readonly, getter=actions) NSArray* actions;
+
 
 // If it's a repeating notification
 - (BOOL) isRepeating;

@@ -64,6 +64,45 @@ static char optionsKey;
     self.badge    = options.badge;
 }
 
+- (void) setupActions
+{
+    NSArray* actions = self.options.actions;
+    NSMutableArray *notificationActions = [[NSMutableArray alloc] init];
+    NSString *category = [self.options valueForKey:@"category"];
+
+    for(int i = 0; i < [actions count]; i++) {
+        NSObject *action = [actions objectAtIndex:i];
+        NSString *title = [action valueForKey:@"title"];
+        NSString *identifier = [action valueForKey:@"identifier"];
+        BOOL destructive = [[action valueForKey:@"destructive"] boolValue];
+        BOOL authenticate = [[action valueForKey:@"authenticationRequired"] boolValue];
+
+        UIMutableUserNotificationAction *notificationAction = [[UIMutableUserNotificationAction alloc] init];
+        notificationAction.identifier = identifier;
+        notificationAction.title = title;
+        notificationAction.activationMode = [[action valueForKey:@"activationMode"]  isEqual: @"background"]
+                                        ? UIUserNotificationActivationModeBackground : UIUserNotificationActivationModeForeground;
+        notificationAction.destructive = destructive;
+        notificationAction.authenticationRequired = authenticate;
+        [notificationActions addObject:notificationAction];
+      }
+
+      UIMutableUserNotificationCategory *notificationCategory = [[UIMutableUserNotificationCategory alloc] init];
+      notificationCategory.identifier = category;
+      [notificationCategory setActions:notificationActions forContext:UIUserNotificationActionContextDefault];
+      [notificationCategory setActions:notificationActions forContext:UIUserNotificationActionContextMinimal];
+
+      NSSet *categories = [NSSet setWithObjects:notificationCategory, nil];
+
+      UIUserNotificationType notificationType = UIUserNotificationTypeBadge | UIUserNotificationTypeSound | UIUserNotificationTypeAlert;
+
+      UIUserNotificationSettings *notificationSettings = [UIUserNotificationSettings settingsForTypes:notificationType categories:categories];
+
+      [[UIApplication sharedApplication] registerUserNotificationSettings:notificationSettings];
+
+    self.category = category;
+}
+
 #pragma mark -
 #pragma mark Methods
 
@@ -79,6 +118,10 @@ static char optionsKey;
                    initWithDict:[self userInfo]];
 
         [self setOptions:options];
+
+        if ([self hasActions]) {
+            [self setupActions];
+        }
     }
 
     return options;
@@ -138,5 +181,16 @@ static char optionsKey;
     return [json stringByReplacingOccurrencesOfString:@"\n"
                                            withString:@""];
 }
+
+
+/**
+* If custom actions were passed in the options.
+*/
+
+- (BOOL) hasActions
+{
+    return [[self.options actions] count] > 0;
+}
+
 
 @end
