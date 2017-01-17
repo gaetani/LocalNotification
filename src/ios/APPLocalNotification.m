@@ -685,8 +685,14 @@
           withCompletionHandler:(void (^)())completionHandler
 {
     UNNotificationRequest* notification = response.notification.request;
-
-    [self fireEvent:@"click" notification:notification];
+    
+    
+    if([response.actionIdentifier isEqualToString:UNNotificationDefaultActionIdentifier])
+        [self fireEvent:@"click" notification:notification data:NULL];
+    else
+        [self fireEvent:@"action" notification:notification data:response.actionIdentifier];
+    
+    
 
     if ([notification.options isRepeating]) {
         [self.center clearNotification:notification];
@@ -695,6 +701,8 @@
         [self.center cancelNotification:notification];
         [self fireEvent:@"cancel" notification:notification];
     }
+    
+    
 
     completionHandler();
 }
@@ -769,8 +777,16 @@
 /**
  * Fire event for local notification.
  */
+- (void) fireEvent:(NSString*)event notification:(UNNotificationRequest*)notification
+{
+    [self fireEvent:event notification:notification data:NULL];
+}
+
+/**
+ * Fire event for local notification.
+ */
 - (void) fireEvent:(NSString*)event
-      notification:(UNNotificationRequest*)notification
+      notification:(UNNotificationRequest*)notification data:(NSString*)data
 {
     NSString* js;
     NSString* appState = [self applicationState];
@@ -779,6 +795,17 @@
     if (notification) {
         NSString* args = [notification encodeToJSON];
         params = [NSString stringWithFormat:@"%@,'%@'", args, appState];
+        
+        if ([data length]  > 0) {
+            NSLog(@"%@", data);
+            params = [NSString stringWithFormat:
+                      @"%@,'%@','%@'",
+                      args, appState, data];
+        } else {
+            params = [NSString stringWithFormat:
+                      @"%@,'%@'",
+                      args, appState];
+        }
     }
 
     js = [NSString stringWithFormat:
