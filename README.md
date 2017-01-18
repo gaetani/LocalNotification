@@ -6,8 +6,7 @@ This is a fork of  [fac/LocalNotification](https://github.com/fac/LocalNotificat
 
 I did some small changes as I needed actions on notifications for Android and iOS. I mostly pulled together some pull requests into this branch and modified some tiny bits in order to have everything as I needed.
 
-So far, actions are working on Android but does not work on iOS. I updated the sample bellow with the template of actions, as well as with the `openApp` attribute. 
-
+So far, actions are working on Android and iOS 10.
 
 ## Sample
 The sample demonstrates how to schedule a local notification which repeats every week. The listener will be called when the user has clicked on the local notification.
@@ -18,38 +17,42 @@ cordova.plugins.notification.local.schedule({
     title: "Production Jour fixe",
     text: "Duration 1h",
     firstAt: monday_9_am,
-    every: "week",
     sound: "file://sounds/reminder.mp3",
-    icon: "http://icons.com/?cal_id=1",
     data: { meetingId:"123#fg8" },
     actions:  [
     {
         title: string,
-        identifier: number
+        identifier: //number for Android and String for iOS. Might work with string for both.
     },
-    category: string,
+    category: string, //Mandatory for iOS with actions
     openApp: boolean
 });
 
 cordova.plugins.notification.local.on("click", function (notification) {
     joinMeeting(notification.data.meetingId);
 });
+
+cordova.plugins.notification.local.on("action", function (notification, activationMode, actionIdentifier) {
+    joinMeeting(notification.data.meetingId);
+    //On iOS, actionIdentifier is the string of the identifier related to the action which was clicked.
+    //On Android it is the full action object which was clicked.
+});
 ```
 
 `actions` is an array of buttons. You can add any other object into this array and it will be passed into the callback.
 
-`category` is also needed and you can use to categorize your notificaiton.
+`category` is also needed for iOS.
 
-`openApp` is available thanks to the PR from [richturner](https://github.com/katzer/cordova-plugin-local-notifications/pull/1025). If this is set to `true`, the app will only open when tapping the notification and not the buttons. If set to `false`, the app will not open when clicking the notifications. 
+`openApp` is available only to Android thanks to the PR from [richturner](https://github.com/katzer/cordova-plugin-local-notifications/pull/1025). If this is set to `true`, the app will open when clicking the notifications or action buttons. When set to `false` the app will only open when the notification is clicked (not the buttons). 
 
 
 ## To Do`s
-* Fix notification for iOS
-* Fix issue with Android when clicking on multiple actions without opening the app. The callback for the actions are lost after a while. 
+See issues.
 
+## Extra
+I did some of the changes in a hurry and lost some of the commit owners. This was my mistake and should be fixed anytime soon. I will add a list of the PRs and fixes that I used to create this fork. Sorry about that.
 
-
-Cordova Local-Notification Plugin
+Katzer
 =================================
 
 The essential purpose of local notifications is to enable an application to inform its users that it has something for them — for example, a message or an upcoming appointment — when the application isn’t running in the foreground.<br>
